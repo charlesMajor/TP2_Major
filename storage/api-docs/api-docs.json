@@ -35,6 +35,9 @@
                                     },
                                     "first_name": {
                                         "type": "string"
+                                    },
+                                    "role_id": {
+                                        "type": "integer"
                                     }
                                 },
                                 "type": "object"
@@ -106,7 +109,7 @@
                 "operationId": "b46f8611fc7d1123f2a3d573cee661c4",
                 "responses": {
                     "204": {
-                        "description": "NO_CONTENT"
+                        "description": "No content"
                     }
                 }
             }

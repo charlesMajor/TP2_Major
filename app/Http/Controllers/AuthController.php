@@ -7,9 +7,17 @@ use Validator;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Repository\UserRepository;
 
 class AuthController extends Controller
 {
+
+    private UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
 
     /**
      * @OA\Post(
@@ -45,6 +53,10 @@ class AuthController extends Controller
      *                     property="first_name",
      *                     type="string"
      *                 ),
+     *                 @OA\Property(
+     *                     property="role_id",
+     *                     type="int"
+     *                 ),
      *             )
      *         )
      *     ),
@@ -71,7 +83,9 @@ class AuthController extends Controller
                 'email' => 'required',
                 'email' => 'email:rfc',
                 'last_name' => 'required',
-                'first_name' => 'required'
+                'first_name' => 'required',
+                'role_id' => 'required',
+                'role_id' => 'in:1,2'
             ]);
 
             if($validator->fails())
@@ -79,13 +93,22 @@ class AuthController extends Controller
                 abort(INVALID_DATA, 'Invalid data');
             }
 
-            $user = User::create([
+            $user = $this->userRepository->create([
                 'login' => $request->login,
                 'password' => bcrypt($request->password),
                 'email' => $request->email,
                 'last_name' => $request->last_name,
-                'first_name' => $request->first_name
-            ]);
+                'first_name' => $request->first_name,
+                'role_id' => $request->role_id]);
+
+            /*$user = User::create([
+                'login' => $request->login,
+                'password' => bcrypt($request->password),
+                'email' => $request->email,
+                'last_name' => $request->last_name,
+                'first_name' => $request->first_name,
+                'role_id' => $request->role_id
+            ]);*/
             
             if(
                 !Auth::attempt([
@@ -93,7 +116,8 @@ class AuthController extends Controller
                     'password' => $request->password,
                     'email' => $request->email,
                     'last_name' => $request->last_name,
-                    'first_name' => $request->first_name
+                    'first_name' => $request->first_name,
+                    'role_id' => $request->role_id
                 ]))
                 {
                     abort(500, 'error');
