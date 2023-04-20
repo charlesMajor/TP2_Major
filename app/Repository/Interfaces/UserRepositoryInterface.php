@@ -6,5 +6,5 @@ use App\Repository\Interfaces\RepositoryInterface;
 
 interface UserRepositoryInterface extends RepositoryInterface 
 {
-    
+    public function editPassword($id, array $content);
 }

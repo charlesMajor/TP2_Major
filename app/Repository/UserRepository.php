@@ -34,4 +34,10 @@ class UserRepository implements UserRepositoryInterface
         $user = User::findOrFail($id);  
         $user->delete();  
     }
+
+    public function editPassword($id, array $content)
+    {
+        $user = User::findOrFail($id);
+        $user->update(['password' => bcrypt($content["password"])]);
+    }
 }

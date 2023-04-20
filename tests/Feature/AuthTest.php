@@ -29,11 +29,11 @@ class AuthTest extends TestCase
         //Valeur hardcodée pour le throttling après communication avec le prof :D
         for ($i = 0; $i < 5; $i++)
         {
-            $json = ["login"=>"test", "password"=>"test", "email"=>"test".$i."@hotmail.com", "last_name"=> "st", "first_name"=>"Te"];
+            $json = ["login"=>"test", "password"=>"test", "password_confirmation"=>"test", "email"=>"test".$i."@hotmail.com", "last_name"=> "st", "first_name"=>"Te", "role_id"=>1];
             $this->post('/api/signup', $json);
         }
 
-        $json = ["login"=>"test", "password"=>"test", "email"=>"test5@hotmail.com", "last_name"=> "st", "first_name"=>"Te"];
+        $json = ["login"=>"test", "password"=>"test", "password_confirmation"=>"test", "email"=>"test5@hotmail.com", "last_name"=> "st", "first_name"=>"Te", "role_id"=>1];
         $response = $this->post('/api/signup', $json);
 
         $response->assertStatus(TOO_MANY_ATTEMPTS);
@@ -43,7 +43,7 @@ class AuthTest extends TestCase
     {
         $this->seed();
 
-        $json = ["login"=>"test", "password"=>"test", "password_confirmation"=>"test", "email"=>"test@hotmail.com", "last_name"=> "st", "first_name"=>"Te"];
+        $json = ["login"=>"test", "password"=>"test", "password_confirmation"=>"test", "email"=>"test@hotmail.com", "last_name"=> "st", "first_name"=>"Te", "role_id"=>1];
         $jsonemail = ["email"=>"test@hotmail.com"];
 
         $response = $this->post('/api/signup', $json);
@@ -57,7 +57,7 @@ class AuthTest extends TestCase
         $this->assertDatabaseHas('users', $jsonemail);
     }
 
-    public function test_registeringWithWrongInformationsThrowsInvalidData()
+    public function test_registeringWithWrongIncompleteInformationsThrowsInvalidData()
     {
         $this->seed();
 
@@ -75,8 +75,8 @@ class AuthTest extends TestCase
             User::factory()->create(), ['*']
         );
 
-        $json = ["login"=>"test", "password"=>"test"];
-        for ($i = 0; $i < 5; $i++)
+        $json = ["email"=>"test@hotmail.com", "password"=>"test"];
+        for ($i = 0; $i < THROTTLING_AUTH; $i++)
         {
             $this->post('/api/signin', $json);
         }
@@ -90,7 +90,7 @@ class AuthTest extends TestCase
     {
         $this->seed();
 
-        $signup = ["login"=>"test", "password"=>"test", "password_confirmation"=>"test", "email"=>"test@hotmail.com", "last_name"=> "st", "first_name"=>"Te"];
+        $signup = ["login"=>"test", "password"=>"test", "password_confirmation"=>"test", "email"=>"test@hotmail.com", "last_name"=> "st", "first_name"=>"Te", "role_id"=>1];
         $jsonemail = ["email"=>"test@hotmail.com"];
         $this->post('/api/signup', $signup);
         $user = Auth::user();
@@ -104,7 +104,7 @@ class AuthTest extends TestCase
     
         $this->assertTrue(count($tokens) == $tokensAtSignup + 1);
         $response->assertJsonFragment($response->json(['userToken' => $tokens[count($tokens) - 1]->plainTextToken]));
-        $response->assertStatus(CREATED);
+        $response->assertStatus(OK);
         $this->assertDatabaseHas('users', $jsonemail);
     }
 
@@ -112,7 +112,7 @@ class AuthTest extends TestCase
     {
         $this->seed();
 
-        $signup = ["login"=>"test", "password"=>"test", "email"=>"test@hotmail.com", "last_name"=> "st", "first_name"=>"Te"];
+        $signup = ["login"=>"test", "password"=>"test", "password_confirmation"=>"test", "email"=>"test@hotmail.com", "last_name"=> "st", "first_name"=>"Te", "role_id"=>1];
         $jsonemail = ["email"=>"test@hotmail.com"];
         $this->post('/api/signup', $signup);
 
@@ -140,7 +140,7 @@ class AuthTest extends TestCase
             User::factory()->create(), ['*']
         );
 
-        for ($i = 0; $i < THROTTLING; $i++)
+        for ($i = 0; $i < THROTTLING_AUTH; $i++)
         {
             $this->post('/api/signout');
         }
@@ -158,7 +158,7 @@ class AuthTest extends TestCase
             User::factory()->create(), ['*']
         );
 
-        $signup = ["login"=>"test", "password"=>"test", "password_confirmation"=>"test", "email"=>"test@hotmail.com", "last_name"=> "st", "first_name"=>"Te"];
+        $signup = ["login"=>"test", "password"=>"test", "password_confirmation"=>"test", "email"=>"test@hotmail.com", "last_name"=> "st", "first_name"=>"Te", "role_id"=>1];
         $jsonemail = ["email"=>"test@hotmail.com"];
         $this->post('/api/signup', $signup);
 

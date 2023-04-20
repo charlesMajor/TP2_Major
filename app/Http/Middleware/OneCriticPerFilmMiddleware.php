@@ -5,9 +5,9 @@ namespace App\Http\Middleware;
 use Auth;
 use Closure;
 use Illuminate\Http\Request;
-use App\Exceptions\NotSameUserException;
+use App\Exceptions\MoreThanOneCriticException;
 
-class SameUserMiddleware
+class OneCriticPerFilmMiddleware
 {
     /**
      * Handle an incoming request.
@@ -21,12 +21,23 @@ class SameUserMiddleware
         try
         {
             $user = Auth::User();
-            if ($request->id != $user->id)
+            $film = $request->film_id;
+
+            $userAlreadyMadeCritic = false;
+            foreach($user->critics as $critic)
             {
-                throw new NotSameUserException;
+                if ($critic->film_id == $film)
+                {
+                    $userAlreadyMadeCritic = true;
+                }
+            }
+
+            if ($userAlreadyMadeCritic == true)
+            {
+                throw new MoreThanOneCriticException;
             }
         }
-        catch (NotSameUserException $e)
+        catch (MoreThanOneCriticException $e)
         {
             abort($e->status(), $e->message());
         }

@@ -12,7 +12,6 @@ use App\Models\Film;
 class ActorFilmTest extends TestCase
 {
     //use DatabaseMigrations si ça ne fonctionne pas
-    use RefreshDatabase;
-        
+    use RefreshDatabase;        
    
 }

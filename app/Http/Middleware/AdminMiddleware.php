@@ -5,9 +5,9 @@ namespace App\Http\Middleware;
 use Auth;
 use Closure;
 use Illuminate\Http\Request;
-use App\Exceptions\NotSameUserException;
+use App\Exceptions\NotAdminException;
 
-class SameUserMiddleware
+class AdminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -21,12 +21,12 @@ class SameUserMiddleware
         try
         {
             $user = Auth::User();
-            if ($request->id != $user->id)
+            if ($user->role_id != ADMIN)
             {
-                throw new NotSameUserException;
+                throw new NotAdminException;
             }
         }
-        catch (NotSameUserException $e)
+        catch (NotAdminException $e)
         {
             abort($e->status(), $e->message());
         }

@@ -100,15 +100,6 @@ class AuthController extends Controller
                 'last_name' => $request->last_name,
                 'first_name' => $request->first_name,
                 'role_id' => $request->role_id]);
-
-            /*$user = User::create([
-                'login' => $request->login,
-                'password' => bcrypt($request->password),
-                'email' => $request->email,
-                'last_name' => $request->last_name,
-                'first_name' => $request->first_name,
-                'role_id' => $request->role_id
-            ]);*/
             
             if(
                 !Auth::attempt([
@@ -190,7 +181,7 @@ class AuthController extends Controller
                 {
                     $user = Auth::User();
                     $token = $user->createToken('userToken');
-                    return response()->json(['userToken' => $token->plainTextToken])->setStatusCode(CREATED);
+                    return response()->json(['userToken' => $token->plainTextToken])->setStatusCode(OK);
                 }
                 else
                 {

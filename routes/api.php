@@ -21,16 +21,27 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //Routes du TP2 ici : 
 Route::group(['middleware' => ['throttle:5,1']], function () {
-    Route::Post('/signup', 'App\Http\Controllers\AuthController@register');
+    Route::post('/signup', 'App\Http\Controllers\AuthController@register');
     Route::post('/signin', 'App\Http\Controllers\AuthController@login');
     Route::post('/signout', 'App\Http\Controllers\AuthController@logout')->middleware('auth:sanctum');
 });
 
-Route::group(['middleware'=>['auth:sanctum']], function() {
-    Route::post('/films', 'App\Http\Controllers\FilmController@create');
-    Route::put('/films/{id}', 'App\Http\Controllers\FilmController@update');
-    Route::delete('/films/{id}', 'App\Http\Controllers\FilmController@destroy');
-    Route::post('/critics', 'App\Http\Controllers\CriticController@create');
-    Route::get('/users/{id}', 'App\Http\Controllers\UserController@show');
-    Route::patch('/users/{id}', 'App\Http\Controllers\UserController@edit');
+Route::group(['middleware' => ['throttle:60,1']], function () { 
+    Route::group(['middleware'=>['auth:sanctum']], function() {
+        Route::group(['middleware'=>['adminmiddleware']], function() {
+            Route::post('/films', 'App\Http\Controllers\FilmController@create');
+            Route::put('/films/{id}', 'App\Http\Controllers\FilmController@update');
+            Route::delete('/films/{id}', 'App\Http\Controllers\FilmController@destroy');
+        });
+        
+        Route::group(['middleware'=>['onecriticperfilmmiddleware']], function() {
+            Route::post('/critics', 'App\Http\Controllers\CriticController@create');
+        });
+    
+        Route::group(['middleware'=>['sameusermiddleware']], function() {
+            Route::get('/users/{id}', 'App\Http\Controllers\UserController@show');
+            Route::patch('/users/{id}', 'App\Http\Controllers\UserController@edit');
+        });
+        
+    });
 });

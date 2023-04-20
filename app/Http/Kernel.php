@@ -65,5 +65,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'sameusermiddleware' => \App\Http\Middleware\SameUserMiddleware::class,
+        'adminmiddleware' => \App\Http\Middleware\AdminMiddleware::class,
+        'onecriticperfilmmiddleware' => \App\Http\Middleware\OneCriticPerFilmMiddleware::class
     ];
 }

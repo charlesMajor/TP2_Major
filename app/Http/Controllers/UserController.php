@@ -21,11 +21,49 @@ class UserController extends Controller
 
     public function show($id, Request $request)
     {
-        return "Show user";
+        try
+        {
+            $user = $this->userRepository->getById($id);
+            return (new UserResource($user))->response()->setStatusCode(OK);
+        }
+        catch(QueryException $ex)
+        {
+            abort(NOT_FOUND, 'Invalid Id');
+        }
+        catch(Exception $ex)
+        {
+            abort(SERVER_ERROR, 'Server error');
+        }
     }
 
     public function edit($id, Request $request)
     {
-        return "Edit user";
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'password' => 'required',
+                'password_confirmation' => 'required_with:password|same:password',
+            ]);
+
+            if($validator->fails())
+            {
+                abort(INVALID_DATA, 'Invalid data');
+            }
+
+            try
+            {
+                $this->userRepository->editPassword($id, $request->all());
+            }
+            catch(QueryException $ex)
+            {
+                abort(NOT_FOUND, 'Invalid Id');
+            }
+            
+            return response(null, OK);
+        }
+        catch(Exception $ex)
+        {
+            abort(SERVER_ERROR, 'Server error');
+        }
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
+use Validator;
 use Illuminate\Http\Request;
 use App\Http\Resources\FilmResource;
 use App\Models\Film;
@@ -19,17 +21,85 @@ class FilmController extends Controller
 
     public function create(Request $request)
     {
-        return "Create film";
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'title' => 'required',
+                'release_year' => 'required',
+                'length' => 'required',
+                'description' => 'required',
+                'rating' => 'required',
+                'special_features' => 'required',
+                'image' => 'required',
+                'language_id' => 'required'
+            ]);
+
+            if($validator->fails())
+            {
+                abort(INVALID_DATA, 'Invalid data');
+            }
+
+            $film = $this->filmRepository->create($request->all());
+            return (new FilmResource($film))->response()->setStatusCode(CREATED);
+        }
+        catch(Exception $ex)
+        {
+            abort(SERVER_ERROR, 'Server error');
+        }
     }
 
     public function update($id, Request $request)
     {
-        return "Update film";
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'title' => 'required',
+                'release_year' => 'required',
+                'length' => 'required',
+                'description' => 'required',
+                'rating' => 'required',
+                'special_features' => 'required',
+                'image' => 'required',
+                'language_id' => 'required'
+            ]);
+
+            if($validator->fails())
+            {
+                abort(INVALID_DATA, 'Invalid data');
+            }
+
+            try
+            {
+                $this->filmRepository->update($id, $request->all());
+            }
+            catch(QueryException $ex)
+            {
+                abort(NOT_FOUND, 'Invalid Id');
+            }
+            
+            return response(null, OK);
+        }
+        catch(Exception $ex)
+        {
+            abort(SERVER_ERROR, 'Server error');
+        }
     }
 
-    public function destroy($id, Request $request)
+    public function destroy($id)
     {
-        return "Destroy film";
+        try
+        {
+            $this->filmRepository->delete($id);
+            return response(null, NO_CONTENT);
+        }
+        catch(QueryException $ex)
+        {
+            abort(NOT_FOUND, 'Invalid Id');
+        }
+        catch(Exception $ex)
+        {
+            abort(SERVER_ERROR, 'Server error');
+        }
     }
 }
 

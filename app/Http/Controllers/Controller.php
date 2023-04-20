@@ -27,7 +27,8 @@ define('SEARCH_PAGINATION', 20);
 define('USER', 1);
 define('ADMIN', 2);
 
-define('THROTTLING', 5);    
+define('THROTTLING_AUTH', 5);    
+define('THROTTLING_ROUTES', 60);
 
 
 class Controller extends BaseController

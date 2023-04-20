@@ -32,6 +32,10 @@ class FilmRepository implements FilmRepositoryInterface
     public function delete($id)
     {
         $film = Film::findOrFail($id);  
+        foreach($film->critics as $critic)
+        {
+            $critic->delete();
+        }
         $film->delete();  
     }
 }
