@@ -19,6 +19,68 @@ class FilmController extends Controller
         $this->filmRepository = $filmRepository;
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/films",
+     *     tags={"Films"},
+     *     summary="Creates a film if the user is an admin",
+     *     description="Maximum of 60 calls per minute",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="title",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="release_year",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="length",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="description",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="rating",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="special_features",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="language_id",
+     *                     type="int"
+     *                 ),
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *        response = 201,
+     *        description = "Created"),
+     *     @OA\Response(
+     *       response = 422,
+     *       description = "Invalid data"),
+     *     @OA\Response(
+     *       response = 401,
+     *       description = "Unauthorized"),
+     *     @OA\Response(
+     *       response = 403,
+     *       description = "Forbidden"),
+     *     @OA\Response(
+     *       response = 500,
+     *       description = "Server error")
+     * )
+     */
     public function create(Request $request)
     {
         try
@@ -48,6 +110,78 @@ class FilmController extends Controller
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/films/{id}",
+     *     tags={"Films"},
+     *     summary="Updates all the infos of a film if the user is an admin",
+     *     description="Maximum of 60 calls per minute",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="title",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="release_year",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="length",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="description",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="rating",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="special_features",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="language_id",
+     *                     type="int"
+     *                 ),
+     *             )
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         description="Id of film to update",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(type="int")
+     *     ),
+     *     @OA\Response(
+     *        response = 200,
+     *        description = "Ok"),
+     *     @OA\Response(
+     *       response = 422,
+     *       description = "Invalid data"),
+     *     @OA\Response(
+     *       response = 401,
+     *       description = "Unauthorized"),
+     *     @OA\Response(
+     *       response = 403,
+     *       description = "Forbidden"),
+     *     @OA\Response(
+     *       response = 404,
+     *       description = "Not found"),
+     *     @OA\Response(
+     *       response = 500,
+     *       description = "Server error")
+     * )
+     */
     public function update($id, Request $request)
     {
         try
@@ -85,6 +219,36 @@ class FilmController extends Controller
         }
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/films/{id}",
+     *     tags={"Films"},
+     *     summary="Deletes a film if the user is an admin",
+     *     description="Maximum of 60 calls per minute",
+     *     @OA\Parameter(
+     *         description="Id of film to delete",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(type="int")
+     *     ),
+     *     @OA\Response(
+     *        response = 204,
+     *        description = "No content"),
+     *     @OA\Response(
+     *       response = 401,
+     *       description = "Unauthorized"),
+     *     @OA\Response(
+     *       response = 403,
+     *       description = "Forbidden"),
+     *     @OA\Response(
+     *       response = 404,
+     *       description = "Not found"),
+     *     @OA\Response(
+     *       response = 500,
+     *       description = "Server error")
+     * )
+     */
     public function destroy($id)
     {
         try

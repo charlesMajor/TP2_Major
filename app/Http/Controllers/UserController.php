@@ -19,6 +19,33 @@ class UserController extends Controller
         $this->userRepository = $userRepository;
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/users/{id}",
+     *     tags={"Users"},
+     *     summary="Gets the infos of an user if he's the one connected",
+     *     description="Maximum of 60 calls per minute",
+     *     @OA\Parameter(
+     *         description="Id of the user to get infos on",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(type="int")
+     *     ),
+     *     @OA\Response(
+     *        response = 200,
+     *        description = "Ok"),
+     *     @OA\Response(
+     *       response = 401,
+     *       description = "Unauthorized"),
+     *     @OA\Response(
+     *       response = 403,
+     *       description = "Forbidden"),
+     *     @OA\Response(
+     *       response = 500,
+     *       description = "Server error")
+     * )
+     */
     public function show($id, Request $request)
     {
         try
@@ -26,16 +53,57 @@ class UserController extends Controller
             $user = $this->userRepository->getById($id);
             return (new UserResource($user))->response()->setStatusCode(OK);
         }
-        catch(QueryException $ex)
-        {
-            abort(NOT_FOUND, 'Invalid Id');
-        }
         catch(Exception $ex)
         {
             abort(SERVER_ERROR, 'Server error');
         }
     }
 
+    /**
+     * @OA\Patch(
+     *     path="/api/users/{id}",
+     *     tags={"Users"},
+     *     summary="Updates the password of an user if he's the one connected",
+     *     description="Maximum of 60 calls per minute",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="password",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password_confirmation",
+     *                     type="string"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         description="Id of the user to update",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(type="int")
+     *     ),
+     *     @OA\Response(
+     *        response = 200,
+     *        description = "Ok"),
+     *     @OA\Response(
+     *       response = 422,
+     *       description = "Invalid data"),
+     *     @OA\Response(
+     *       response = 401,
+     *       description = "Unauthorized"),
+     *     @OA\Response(
+     *       response = 403,
+     *       description = "Forbidden"),
+     *     @OA\Response(
+     *       response = 500,
+     *       description = "Server error")
+     * )
+     */
     public function edit($id, Request $request)
     {
         try
@@ -50,14 +118,7 @@ class UserController extends Controller
                 abort(INVALID_DATA, 'Invalid data');
             }
 
-            try
-            {
-                $this->userRepository->editPassword($id, $request->all());
-            }
-            catch(QueryException $ex)
-            {
-                abort(NOT_FOUND, 'Invalid Id');
-            }
+            $this->userRepository->editPassword($id, $request->all());
             
             return response(null, OK);
         }
